@@ -20,15 +20,18 @@ public class FFortSaveGame : FSaveGame
     }
 }
 
-public sealed class EmptyPackage(string name, IFileProvider provider, TypeMappings mappings) : AbstractUePackage(name, provider, mappings)
+public sealed class EmptyPackage(string name, IFileProvider provider, TypeMappings mappings)
+    : AbstractUePackage(name, provider)
 {
-    public override UObject GetExportOrNull(string name, StringComparison comparisonType = StringComparison.Ordinal)
+    public override int GetExportIndex(string name, StringComparison comparisonType)
         => throw new NotImplementedException();
 
-    public override ResolvedObject ResolvePackageIndex(FPackageIndex index) => throw new NotImplementedException();
+    public override ResolvedObject ResolvePackageIndex(FPackageIndex index)
+        => throw new NotImplementedException();
 
     public override FPackageFileSummary Summary { get; } = new();
     public override FNameEntrySerialized[] NameMap { get; } = [];
-    public override Lazy<UObject>[] ExportsLazy { get; } = [];
-    public override bool IsFullyLoaded => true;
+
+    public override int ImportMapLength => 0;
+    public override int ExportMapLength => 0;
 }
