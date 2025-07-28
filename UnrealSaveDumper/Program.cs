@@ -1,4 +1,5 @@
 ﻿global using Serilog;
+using CUE4Parse.Compression;
 using CUE4Parse.FileProvider;
 using CUE4Parse.MappingsProvider;
 using Newtonsoft.Json;
@@ -41,6 +42,27 @@ AnsiConsole.WriteLine($"Selected game name is: {gameName}");
 var fileName = Path.GetFileName(savFile);
 var emptyProvider = new DefaultFileProvider(Directory.GetCurrentDirectory(), SearchOption.TopDirectoryOnly, true);
 var mappingsPath = AnsiConsole.Ask("Path to a [blue]mapping (.usmap)[/] (if applicable).", "None").Replace("\"", "");
+
+var oodlePath = Path.Combine(Directory.GetCurrentDirectory(), OodleHelper.OODLE_DLL_NAME);
+
+if (File.Exists(OodleHelper.OODLE_DLL_NAME))
+{
+    File.Move(OodleHelper.OODLE_DLL_NAME, oodlePath, true);
+}
+else if (!File.Exists(oodlePath))
+{
+    await OodleHelper.DownloadOodleDllAsync(oodlePath);
+}
+
+OodleHelper.Initialize(oodlePath);
+
+var zlibPath = Path.Combine(Directory.GetCurrentDirectory(), ZlibHelper.DLL_NAME);
+if (!File.Exists(zlibPath))
+{
+    await ZlibHelper.DownloadDllAsync(zlibPath);
+}
+
+ZlibHelper.Initialize(zlibPath);
 
 if (!string.IsNullOrWhiteSpace(mappingsPath) && !mappingsPath.Equals("None", StringComparison.OrdinalIgnoreCase)) emptyProvider.MappingsContainer = new FileUsmapTypeMappingsProvider(mappingsPath);
 

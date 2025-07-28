@@ -43,7 +43,8 @@ public class FFortSaveGameHeader : FSaveGameHeader
         }
 
         CustomVersions = serializeCustomVersions ? new FCustomVersionContainer(Ar, CustomVersionFormat) : new FCustomVersionContainer();
-
+        
+        Ar.Read<byte>(); // unknown
         return Ar;
     }
 }
